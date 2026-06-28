@@ -35,7 +35,9 @@ def cost(X, y, theta):
     eps = 1e-15
     return -np.mean(y * np.log(h + eps) + (1 - y) * np.log(1 - h + eps))
 
-
+# X      : (m, n)   students × features      (column n is the bias, always 1)
+# theta  : (n,)     one weight per feature
+# X @ theta : (m,)  each student's features × their weights -> one score per student
 def train_one(X, y, alpha, epochs, label=""):
     """Gradient descent for a single binary classifier.
     X: (m, n+1) feature matrix WITH a leading bias column of ones.
