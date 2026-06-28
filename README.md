@@ -12,7 +12,7 @@ sigmoid, log-loss). No `describe()`, no ready-made classifier.
 
 - [Project layout](#project-layout)
 - [Setup](#setup)
-- [1. Data analysis — `describe.py`](#1-data-analysis--describepy)
+- [1. Data analysis](#1-data-analysis--describepy)
 - [2. Data visualization](#2-data-visualization)
 - [3. Logistic regression](#3-logistic-regression)
 - [The math](#the-math)
@@ -55,15 +55,38 @@ a hand-written reimplementation of `pandas.describe()`.
 python describe.py datasets/dataset_train.csv
 ```
 
-Each statistic is computed with explicit loops. Two details that matter:
+Each statistic is computed with explicit loops — no `mean`, `std`, `min`, `max`,
+or `percentile` helpers. Three details are what make the output match pandas exactly.
 
-- **Standard deviation** uses the sample formula (divide by `N − 1`), matching pandas.
-- **Percentiles** use linear interpolation: sort the values, find the fractional
-  rank `(p/100)·(N−1)`, and blend the two neighbouring points. This is what makes
-  the quartiles line up with pandas exactly.
+**Missing values are skipped, not zero-filled.** The dataset has empty cells. Every
+statistic ignores them, so `Count` is the number of values actually present in a
+column (which is why it can be less than the number of rows). Treating a missing
+value as `0` would quietly corrupt the mean, the std, and the percentiles all at once.
 
-Missing values are skipped consistently, so `Count` reflects the real number of
-present values per column.
+**Standard deviation divides by `N − 1`, not `N`.** This is the *sample* standard
+deviation (Bessel's correction), which is what pandas uses:
+
+```
+std = sqrt( Σ(xᵢ − mean)² / (N − 1) )
+```
+
+Dividing by `N` instead would give a slightly smaller number that wouldn't line up
+with the reference output.
+
+**Percentiles use linear interpolation.** A percentile is a *position* in the sorted
+data, and that position usually falls *between* two real data points — so we blend
+the two neighbours instead of rounding to one. The steps:
+
+1. Sort the values ascending.
+2. Compute a fractional rank using 0-based indices: `rank = (p / 100) · (N − 1)`.
+3. Let `lo = floor(rank)` and `frac = rank − lo` (how far past `lo` we are, 0–1).
+4. Result = `sorted[lo] + frac · (sorted[lo+1] − sorted[lo])`.
+
+For example, the median (`p = 50`) of `[10, 20, 30, 40, 50, 60]`:
+`rank = 0.50 · (6 − 1) = 2.5`, so `lo = 2`, `frac = 0.5`, giving
+`30 + 0.5 · (40 − 30) = 35` — exactly halfway between the two middle values, as
+expected. When `rank` lands on a whole number, `frac = 0` and the value is read
+directly. This is the same method numpy and pandas use by default.
 
 ## 2. Data visualization
 
