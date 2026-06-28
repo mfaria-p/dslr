@@ -3,7 +3,7 @@
 A from-scratch **multiclass logistic regression** that re-sorts Hogwarts students
 into their houses. The Sorting Hat is broken; given each student's scores in 13
 magic courses, the classifier predicts one of four houses — Gryffindor,
-Hufflepuff, Ravenclaw, or Slytherin — and reaches **~98.7% accuracy**.
+Hufflepuff, Ravenclaw, or Slytherin — and reaches **~99.0% accuracy**.
 
 The statistics and the model are implemented by hand (gradient descent, the
 sigmoid, log-loss). No `describe()`, no ready-made classifier.
