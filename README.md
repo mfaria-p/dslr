@@ -8,6 +8,11 @@ Hufflepuff, Ravenclaw, or Slytherin — and reaches **~99.0% accuracy**.
 The statistics and the model are implemented by hand (gradient descent, the
 sigmoid, log-loss). No `describe()`, no ready-made classifier.
 
+> A machine learning project from the **42 school** curriculum, evaluated by peer
+> review. The classifier must reach at least 98% accuracy (measured with
+> scikit-learn's `accuracy_score`) to be considered a worthy replacement for the
+> Sorting Hat.
+
 ## Table of contents
 
 - [Project layout](#project-layout)
